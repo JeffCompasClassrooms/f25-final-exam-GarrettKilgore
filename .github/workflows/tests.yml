@@ -23,7 +23,7 @@ jobs:
           pip install pytest pytest-describe pytest-spec pytest-mock
 
       - name: Run brute tests
-        run: pytest -q test_brute.py --maxfail=1 --disable-warnings
+        run: pytest --spec test_brute.py --maxfail=1 --disable-warnings
 
   test-christmas:
     name: Unit tests (test_christmas_list)
@@ -41,4 +41,4 @@ jobs:
           pip install pytest pytest-describe pytest-spec pytest-mock
 
       - name: Run christmas list tests
-        run: pytest -q test_christmas_list.py --maxfail=1 --disable-warnings
+        run: pytest --spec test_christmas_list.py --maxfail=1 --disable-warnings
