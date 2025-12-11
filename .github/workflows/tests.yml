@@ -23,4 +23,4 @@ jobs:
           pip install pytest pytest-describe pytest-spec pytest-mock
 
       - name: Run unit tests
-        run: pytest -q test_battery.py --maxfail=1 --disable-warnings
+        run: pytest -q test_brute.py test_christmas_list.py --maxfail=1 --disable-warnings
