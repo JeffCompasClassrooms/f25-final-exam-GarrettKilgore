@@ -7,8 +7,8 @@ on:
     branches: [ "**" ]
 
 jobs:
-  unit-tests:
-    name: Unit tests (Battery)
+  test-brute:
+    name: Unit tests (test_brute)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -22,5 +22,23 @@ jobs:
           python -m pip install --upgrade pip
           pip install pytest pytest-describe pytest-spec pytest-mock
 
-      - name: Run unit tests
-        run: pytest -q test_brute.py test_christmas_list.py --maxfail=1 --disable-warnings
+      - name: Run brute tests
+        run: pytest -q test_brute.py --maxfail=1 --disable-warnings
+
+  test-christmas:
+    name: Unit tests (test_christmas_list)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest pytest-describe pytest-spec pytest-mock
+
+      - name: Run christmas list tests
+        run: pytest -q test_christmas_list.py --maxfail=1 --disable-warnings
