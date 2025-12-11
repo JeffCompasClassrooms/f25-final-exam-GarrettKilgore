@@ -2,6 +2,7 @@ import pytest
 import os
 import tempfile
 import shutil
+import pickle
 from christmas_list import ChristmasList
 
 
@@ -21,9 +22,71 @@ def describe_ChristmasList_System_Tests():
     def christmas_list(test_file):
         return ChristmasList(test_file)
     
+
+    def describe_loadItems_functionality():
+        
+        def it_loads_empty_list(christmas_list):
+            christmas_list.saveItems([])
+            items = christmas_list.loadItems()
+            assert items == []
+            assert isinstance(items, list)
+        
+        def it_loads_single_item(christmas_list):
+            test_data = [{"name": "puzzle", "purchased": True}]
+            christmas_list.saveItems(test_data)
+            items = christmas_list.loadItems()
+            assert len(items) == 1
+            assert items[0]["name"] == "puzzle"
+            assert items[0]["purchased"] == True
+        
+        def it_loads_multiple_items(christmas_list):
+            test_data = [
+                {"name": "doll", "purchased": False},
+                {"name": "truck", "purchased": True},
+                {"name": "ball", "purchased": False}
+            ]
+            christmas_list.saveItems(test_data)
+            items = christmas_list.loadItems()
+            assert len(items) == 3
+            assert items[0]["name"] == "doll"
+            assert items[1]["purchased"] == True
+            assert items[2]["name"] == "ball"
+
+
+    def describe_saveItems_functionality():
+        
+        def it_saves_empty_list(christmas_list, test_file):
+            christmas_list.saveItems([])
+            assert os.path.exists(test_file)
+            with open(test_file, "rb") as f:
+                items = pickle.load(f)
+            assert items == []
+        
+        def it_saves_single_item(christmas_list, test_file):
+            test_items = [{"name": "robot", "purchased": False}]
+            christmas_list.saveItems(test_items)
+            with open(test_file, "rb") as f:
+                items = pickle.load(f)
+            assert len(items) == 1
+            assert items[0]["name"] == "robot"
+            assert items[0]["purchased"] == False
+        
+        def it_saves_multiple_items(christmas_list, test_file):
+            test_items = [{"name": "skateboard", "purchased": False},
+                          {"name": "helmet", "purchased": True},
+                          {"name": "knee pads", "purchased": False}
+                          ]
+            christmas_list.saveItems(test_items)
+            with open(test_file, "rb") as f:
+                items = pickle.load(f)
+            assert len(items) == 3
+            assert items[0]["name"] == "skateboard"
+            assert items[1]["purchased"] == True
+            assert items[2]["name"] == "knee pads"
+    
     def describe_add_functionality():
         
-        def it_adds_single_item(christmas_list, test_file):
+        def it_adds_single_item(christmas_list):
             christmas_list.add("bb gun")
             items = christmas_list.loadItems()
             assert len(items) == 1
@@ -122,7 +185,6 @@ def describe_ChristmasList_System_Tests():
             expected = "[_] telescope\n[x] microscope\n[_] compass\n"
             assert captured.out == expected
     
-    
     def describe_edge_cases():
         
         def it_handles_empty_string_name(christmas_list):
@@ -151,7 +213,7 @@ def describe_ChristmasList_System_Tests():
             assert items[0]["name"] == "Christmas Tree"
             assert items[1]["name"] == "Snowman"
         
-        def it_handles_newlines_in_name(christmas_list, capsys):
+        def it_handles_newlines_in_name(christmas_list):
             christmas_list.add("multi\nline\nitem")
             items = christmas_list.loadItems()
             assert items[0]["name"] == "multi\nline\nitem"
