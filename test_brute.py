@@ -193,3 +193,45 @@ def describe_bruteMany():
         with patch.object(brute, 'randomGuess', side_effect=["a", ""]):
             result = brute.bruteMany(limit=100)
             assert result >= 0
+
+
+def describe_edge_cases():
+    
+    def it_handles_whitespace_only_password():
+        password = "   "
+        brute = Brute(password)
+        assert brute.bruteOnce("   ") == True
+        assert brute.bruteOnce("") == False
+        assert brute.bruteOnce("  ") == False
+    
+    def it_handles_password_with_leading_trailing_spaces():
+        password = " test "
+        brute = Brute(password)
+        assert brute.bruteOnce(" test ") == True
+        assert brute.bruteOnce("test") == False
+    
+    def it_handles_all_digits_password():
+        password = "00000000"
+        brute = Brute(password)
+        assert brute.bruteOnce("00000000") == True
+        assert brute.bruteOnce("0000000") == False
+    
+    def it_handles_all_same_character():
+        password = "aaaaaaa"
+        brute = Brute(password)
+        assert brute.bruteOnce("aaaaaaa") == True
+        assert brute.bruteOnce("aaaaaa") == False
+    
+    def it_handles_very_large_limit_without_success():
+        password = "impossible"
+        brute = Brute(password)
+        with patch.object(brute, 'randomGuess', return_value="wrong"):
+            result = brute.bruteMany(limit=10000)
+            assert result == -1
+    
+    def it_handles_similar_looking_characters():
+        password = "0O1lI"
+        brute = Brute(password)
+        assert brute.bruteOnce("0O1lI") == True
+        assert brute.bruteOnce("001lI") == False
+        assert brute.bruteOnce("0011I") == False
